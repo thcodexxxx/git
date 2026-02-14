@@ -1,0 +1,274 @@
+:root {
+    --cabinet-bg: #1a1a1a;
+    --reel-bg: #ffffff;
+    --text-color: #e0e0e0;
+    --accent-color: #ff0055; /* Neon Red/Pink */
+    --accent-blue: #00ccff;
+    --accent-gold: #ffd700;
+    --btn-stop-bg: #cc0000;
+    --btn-stop-active: #ff3333;
+    --glass-shine: rgba(255, 255, 255, 0.1);
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #000;
+    color: var(--text-color);
+    font-family: 'Roboto Mono', 'Noto Sans JP', monospace;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+#app {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    transform: scale(0.9); /* Fit to screen if needed */
+}
+
+/* Data Counter */
+.data-counter {
+    background: linear-gradient(to bottom, #333, #222);
+    border: 2px solid #555;
+    border-radius: 10px;
+    padding: 15px;
+    width: 600px;
+    display: flex;
+    justify-content: space-between;
+    box-shadow: 0 0 15px rgba(0, 204, 255, 0.3);
+}
+
+.counter-display {
+    display: flex;
+    gap: 15px;
+    align-items: flex-end;
+}
+
+.counter-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.counter-item .label {
+    font-size: 0.8rem;
+    color: #888;
+}
+
+.counter-item .value {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--accent-blue);
+    font-family: 'Digital-7', monospace; /* Fallback to monospace */
+}
+
+.counter-item.main-counter .value {
+    font-size: 2.5rem;
+    color: var(--accent-gold);
+}
+
+.slump-graph-container {
+    background: #111;
+    border: 1px solid #444;
+}
+
+/* Cabinet */
+.cabinet {
+    background: var(--cabinet-bg);
+    border: 10px solid #111;
+    border-radius: 20px;
+    width: 650px;
+    padding: 20px;
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(0,0,0,0.5);
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    position: relative;
+}
+
+/* Top LCD */
+.top-lcd {
+    background: #000;
+    height: 120px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    border: 2px solid #333;
+    position: relative;
+}
+
+.lcd-message {
+    font-size: 2rem;
+    color: white;
+    text-shadow: 0 0 10px var(--accent-color);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 0.8; }
+    50% { opacity: 1; text-shadow: 0 0 20px var(--accent-color); }
+    100% { opacity: 0.8; }
+}
+
+/* Reel Window */
+.reel-window {
+    background: #000;
+    height: 300px; /* Adjust based on reel calculation */
+    width: 100%;
+    position: relative;
+    border: 5px solid #444;
+    border-radius: 5px;
+    overflow: hidden;
+    box-shadow: inset 0 0 30px rgba(0,0,0,0.8);
+}
+
+#reels-canvas {
+    background: #fff; /* White background for reels */
+    width: 100%;
+    height: 100%;
+}
+
+.reel-frame {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    background: linear-gradient(
+        to bottom,
+        rgba(0,0,0,0.8) 0%,
+        rgba(0,0,0,0.1) 20%,
+        rgba(0,0,0,0) 40%,
+        rgba(0,0,0,0) 60%,
+        rgba(0,0,0,0.1) 80%,
+        rgba(0,0,0,0.8) 100%
+    );
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+}
+
+/* Control Panel */
+.control-panel {
+    background: #222;
+    padding: 20px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    border-top: 2px solid #555;
+    position: relative;
+    box-shadow: inset 0 2px 5px rgba(255,255,255,0.1);
+}
+
+.c-btn {
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 4px 0 rgba(0,0,0,0.5), 0 5px 10px rgba(0,0,0,0.3);
+    transition: transform 0.1s, box-shadow 0.1s;
+    font-weight: bold;
+    color: white;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+}
+
+.c-btn:active {
+    transform: translateY(4px);
+    box-shadow: 0 0 0 rgba(0,0,0,0.5);
+}
+
+.bet-btn {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(to bottom, #555, #333);
+    font-size: 0.8rem;
+    color: var(--accent-gold);
+}
+
+.stop-buttons {
+    display: flex;
+    gap: 20px;
+}
+
+.stop-btn {
+    width: 80px;
+    height: 80px;
+    background: radial-gradient(circle at 30% 30%, #ff6666, #cc0000);
+    position: relative;
+}
+
+.stop-btn:active {
+    background: #cc0000;
+}
+
+.stop-btn.disabled {
+    filter: brightness(0.5);
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: 0 4px 0 rgba(0,0,0,0.5);
+}
+
+/* Lever (Simplified CSS representation) */
+.lever {
+    width: 40px;
+    height: 40px;
+    background: #111;
+    border-radius: 50%;
+    position: relative;
+    cursor: pointer;
+    margin-left: 20px;
+    box-shadow: inset 0 0 10px #000;
+}
+
+.lever-ball {
+    width: 30px;
+    height: 30px;
+    background: radial-gradient(circle at 30% 30%, #fff, #999);
+    border-radius: 50%;
+    position: absolute;
+    top: -30px;
+    left: 5px;
+    transition: top 0.1s;
+}
+
+.lever-stick {
+    width: 8px;
+    height: 30px;
+    background: #888;
+    position: absolute;
+    top: -10px;
+    left: 16px;
+    z-index: -1;
+}
+
+.lever:active .lever-ball {
+    top: 5px; /* Push down effect */
+}
+
+.right-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-width: 100px;
+}
+
+.credit-display, .payout-display {
+    background: #000;
+    border: 1px solid #444;
+    padding: 5px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+    color: var(--accent-blue);
+}
+
+.credit-display .value, .payout-display .value {
+    font-weight: bold;
+    font-family: 'Digital-7', monospace;
+}

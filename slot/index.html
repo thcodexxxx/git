@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pachislot Simulator</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="app">
+        <!-- Data Counter Area -->
+        <div id="data-counter" class="data-counter">
+            <div class="counter-display">
+                <div class="counter-item">
+                    <span class="label">BIG</span>
+                    <span class="value" id="big-count">0</span>
+                </div>
+                <div class="counter-item">
+                    <span class="label">REG</span>
+                    <span class="value" id="reg-count">0</span>
+                </div>
+                <div class="counter-item">
+                    <span class="label">ART</span>
+                    <span class="value" id="art-count">0</span>
+                </div>
+                <!-- Main Game Count (Large) -->
+                <div class="counter-item main-counter">
+                    <span class="label">GAMES</span>
+                    <span class="value" id="game-count">0</span>
+                </div>
+            </div>
+            <div class="slump-graph-container">
+                <canvas id="slump-graph" width="300" height="100"></canvas>
+            </div>
+        </div>
+
+        <!-- Slot Machine Cabinet -->
+        <div class="cabinet">
+            <!-- Top LCD / Effect Area -->
+            <div class="top-lcd">
+                <div id="lcd-message" class="lcd-message">READY</div>
+            </div>
+
+            <!-- Reel Window -->
+            <div class="reel-window">
+                <canvas id="reels-canvas" width="600" height="400"></canvas>
+                <div class="reel-frame"></div> <!-- Decorative frame -->
+            </div>
+
+            <!-- Control Panel -->
+            <div class="control-panel">
+                <div class="left-controls">
+                    <button id="max-bet-btn" class="c-btn bet-btn">MAX BET</button>
+                    <div id="lever" class="lever">
+                        <div class="lever-ball"></div>
+                        <div class="lever-stick"></div>
+                    </div>
+                </div>
+                
+                <div class="stop-buttons">
+                    <button id="stop-left" class="c-btn stop-btn" data-reel="0">STOP</button>
+                    <button id="stop-center" class="c-btn stop-btn" data-reel="1">STOP</button>
+                    <button id="stop-right" class="c-btn stop-btn" data-reel="2">STOP</button>
+                </div>
+
+                <div class="right-controls">
+                    <div class="credit-display">
+                        <span class="label">CREDIT</span>
+                        <span class="value" id="credit-val">50</span>
+                    </div>
+                    <div class="payout-display">
+                        <span class="label">PAYOUT</span>
+                        <span class="value" id="payout-val">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="module" src="js/main.js"></script>
+</body>
+</html>
