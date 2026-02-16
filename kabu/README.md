@@ -7,6 +7,7 @@
 *   **自動データ取得**: 株価は `yfinance`、投資信託はYahoo!ファイナンスから自動取得。
 *   **可視化**: Plotlyによる資産ヒートマップ、Matplotlibによる個別銘柄のチャート表示。
 *   **キャッシュ機能**: 投資信託データのキャッシュにより、読み込み速度を最適化。
+*   **一括取込**: 手動リストからの株価自動取得・取込ツールを追加。
 
 ## セットアップ
 
@@ -46,8 +47,26 @@ streamlit run stock_app.py
 
 データは自動的に `portfolio_main.csv` または `portfolio_sub.csv` に保存されます。
 
+### 手動リストからの取り込み（仮想ポートフォリオ）
+手動で作成したリストを読み込み、指定日の株価を自動取得して `portfolio_sub.csv` に追記できます。
+
+1.  `import_data.txt` に以下の形式（タブ区切り推奨）でデータを貼り付けます。
+    ```text
+    No.	分析日	銘柄コード	銘柄名	...
+    1	2026/01/01	9216	ビーウィズ	...
+    ```
+    ※分析日が休場日の場合、自動的に直近の営業日の終値を取得します。
+
+2.  以下のコマンドを実行します。
+    ```bash
+    python import_stock_data.py
+    ```
+
 ## ファイル構成
 *   `stock_app.py`: アプリケーション本体
+*   `import_stock_data.py`: 手動リスト取り込みツール
+*   `import_data.txt`: 取り込み用データファイル
+*   `stock_research_agent.py`: (Experimental) AIによる銘柄リサーチツール
 *   `specification.md`: 詳細仕様書
 *   `stock_data_cache/`: 取得した投資信託データのキャッシュ
 

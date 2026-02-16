@@ -1,6 +1,0 @@
-streamlit
-yfinance
-feedparser
-plotly
-pandas
-watchdog
