@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Household Finance Tracker</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Boxicons -->
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="dark-theme">
+
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="logo-details">
+                <i class='bx bx-wallet-alt'></i>
+                <span class="logo_name">Shushi App</span>
+            </div>
+
+            <ul class="nav-links">
+                <li>
+                    <a href="#" class="active" data-view="dashboard">
+                        <i class='bx bx-grid-alt'></i>
+                        <span class="links_name">ダッシュボード</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" data-view="monthly">
+                        <i class='bx bx-book-content'></i>
+                        <span class="links_name">月別収支</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" data-view="assets">
+                        <i class='bx bx-pie-chart-alt-2'></i>
+                        <span class="links_name">資産・残高</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content Area -->
+        <section class="main-content">
+            <header class="top-bar">
+                <h2 id="view-title">ダッシュボード</h2>
+                <div class="user-controls">
+                    <button id="theme-toggle" class="icon-btn">
+                        <i class='bx bx-moon'></i>
+                    </button>
+                    <!-- Floating Quick Add Button (Desktop) -->
+                    <button class="primary-btn" id="quick-add-btn">
+                        <i class='bx bx-plus'></i> クイック追加
+                    </button>
+                </div>
+            </header>
+
+            <!-- Views -->
+            <div class="views-container">
+                <!-- Utilities -->
+                <div style="margin-bottom: 20px; display: flex; justify-content: flex-end;">
+                    <button id="inject-mock-btn" class="glass"
+                        style="padding: 5px 10px; cursor: pointer; border: 1px solid var(--current-glass-border); color: var(--current-text-muted); background: transparent; border-radius: 4px; font-size: 12px;">
+                        <i class='bx bx-data'></i> テスト用モックデータを注入
+                    </button>
+                </div>
+
+                <!-- Dashboard View -->
+                <div id="dashboard-view" class="view active-view">
+                    <div class="summary-cards">
+                        <div class="card glass">
+                            <i class='bx bx-trending-up icon income'></i>
+                            <div class="card-details">
+                                <span class="card-title">今月の収入</span>
+                                <h3 class="card-amount" id="dash-income">¥0</h3>
+                            </div>
+                        </div>
+                        <div class="card glass">
+                            <i class='bx bx-trending-down icon expense'></i>
+                            <div class="card-details">
+                                <span class="card-title">今月の支出</span>
+                                <h3 class="card-amount" id="dash-expense">¥0</h3>
+                            </div>
+                        </div>
+                        <div class="card glass">
+                            <i class='bx bx-transfer icon balance'></i>
+                            <div class="card-details">
+                                <span class="card-title">今月の差額</span>
+                                <h3 class="card-amount" id="dash-balance">¥0</h3>
+                            </div>
+                        </div>
+                        <div class="card glass accent">
+                            <i class='bx bx-building-house icon total-assets'></i>
+                            <div class="card-details">
+                                <span class="card-title">総資産額</span>
+                                <h3 class="card-amount" id="dash-total-assets">¥0</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="charts-section">
+                        <!-- Chart placeholders -->
+                        <div class="chart-container glass">
+                            <h3>収支トレンド</h3>
+                            <div class="dummy-chart"></div>
+                        </div>
+                        <div class="chart-container glass">
+                            <h3>支出カテゴリ</h3>
+                            <div class="dummy-chart circle"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Monthly View -->
+                <div id="monthly-view" class="view">
+                    <div class="glass full-width-card" style="padding: 24px;">
+                        <div class="monthly-header"
+                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                            <div class="month-selector" style="display: flex; align-items: center; gap: 10px;">
+                                <button class="icon-btn" id="prev-month-btn"><i class='bx bx-chevron-left'></i></button>
+                                <h3 id="current-month-display" style="font-size: 20px; margin: 0;">2026年 1月</h3>
+                                <button class="icon-btn" id="next-month-btn"><i
+                                        class='bx bx-chevron-right'></i></button>
+                            </div>
+                            <div class="monthly-summary-badges" style="display: flex; gap: 15px;">
+                                <div class="badge success"
+                                    style="background: rgba(16,185,129,0.1); color: var(--success-color); padding: 5px 12px; border-radius: 20px; font-weight: 600;">
+                                    収入: <span id="monthly-badge-in">¥0</span></div>
+                                <div class="badge danger"
+                                    style="background: rgba(239,68,68,0.1); color: var(--danger-color); padding: 5px 12px; border-radius: 20px; font-weight: 600;">
+                                    支出: <span id="monthly-badge-out">¥0</span></div>
+                                <!-- 追加分: 証券・共済への資金移動額 -->
+                                <div class="badge transfer-sec"
+                                    style="background: rgba(148,163,184,0.1); color: var(--accent-light, #a5b4fc); padding: 5px 12px; border-radius: 20px; font-weight: 600;">
+                                    楽天証券: <span id="monthly-badge-rakuten-sec">¥0</span></div>
+                                <div class="badge transfer-kyosai"
+                                    style="background: rgba(148,163,184,0.1); color: var(--accent-light, #a5b4fc); padding: 5px 12px; border-radius: 20px; font-weight: 600;">
+                                    小規模企業共済: <span id="monthly-badge-kyosai">¥0</span></div>
+                            </div>
+                        </div>
+
+                        <div class="table-container" style="overflow-x: auto;">
+                            <table class="shushi-table"
+                                style="width: 100%; border-collapse: collapse; text-align: left;">
+                                <thead>
+                                    <tr style="border-bottom: 2px solid var(--current-glass-border);">
+                                        <th style="padding: 12px; color: var(--current-text-muted);">日付</th>
+                                        <th style="padding: 12px; color: var(--current-text-muted);">種別</th>
+                                        <th style="padding: 12px; color: var(--current-text-muted);">カテゴリ</th>
+                                        <th style="padding: 12px; color: var(--current-text-muted);">金額</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="transaction-list">
+                                    <!-- Dynamic rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Assets View -->
+                <div id="assets-view" class="view">
+                    <div class="summary-cards" style="margin-bottom: 20px;">
+                        <div class="card glass accent" style="flex: 1; justify-content: center;">
+                            <div class="card-details" style="align-items: center;">
+                                <span class="card-title" style="color: rgba(255,255,255,0.8);">総資産額</span>
+                                <h3 class="card-amount" id="assets-total-view" style="font-size: 36px;">¥0</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="glass full-width-card" style="padding: 24px;">
+                        <h3 style="margin-bottom: 20px; color: var(--current-text-muted);">口座残高一覧</h3>
+                        <div class="assets-grid" id="assets-list"
+                            style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px;">
+                            <!-- Dynamic Asset Cards -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Quick Add Modal -->
+    <div class="modal-overlay" id="quick-add-modal">
+        <div class="modal glass">
+            <div class="modal-header">
+                <h3>取引を追加</h3>
+                <button class="icon-btn close-modal" type="button"><i class='bx bx-x'></i></button>
+            </div>
+            <div class="modal-body">
+                <form id="add-tx-form" style="display: flex; flex-direction: column; gap: 15px;">
+                    <div style="display: flex; gap: 10px;">
+                        <label style="flex: 1; display: flex; align-items: center; gap: 5px; cursor: pointer;">
+                            <input type="radio" name="tx_type" value="expense" checked> 支出
+                        </label>
+                        <label style="flex: 1; display: flex; align-items: center; gap: 5px; cursor: pointer;">
+                            <input type="radio" name="tx_type" value="income"> 収入
+                        </label>
+                        <label style="flex: 1; display: flex; align-items: center; gap: 5px; cursor: pointer;">
+                            <input type="radio" name="tx_type" value="transfer"> 資金移動
+                        </label>
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: 5px;">
+                        <label>日付</label>
+                        <input type="date" id="tx_date" required
+                            style="padding: 10px; border-radius: 8px; border: 1px solid var(--current-glass-border); background: rgba(0,0,0,0.1); color: var(--current-text); font-family: 'Inter';">
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: 5px;">
+                        <label>カテゴリ</label>
+                        <select id="tx_category" required
+                            style="padding: 10px; border-radius: 8px; border: 1px solid var(--current-glass-border); background: var(--current-sidebar); color: var(--current-text); font-family: 'Inter';">
+                            <!-- Populated dynamically -->
+                        </select>
+                    </div>
+
+                    <div style="display: flex; gap: 10px;">
+                        <div style="flex: 1; display: flex; flex-direction: column; gap: 5px;">
+                            <label>出金元口座</label>
+                            <select id="tx_from_account"
+                                style="padding: 10px; border-radius: 8px; border: 1px solid var(--current-glass-border); background: var(--current-sidebar); color: var(--current-text); font-family: 'Inter';">
+                                <option value="">(なし)</option>
+                                <option value="sumishin">住信SBIネット銀行</option>
+                                <option value="rakuten">楽天銀行</option>
+                            </select>
+                        </div>
+                        <div style="flex: 1; display: flex; flex-direction: column; gap: 5px;">
+                            <label>入金先口座</label>
+                            <select id="tx_to_account"
+                                style="padding: 10px; border-radius: 8px; border: 1px solid var(--current-glass-border); background: var(--current-sidebar); color: var(--current-text); font-family: 'Inter';">
+                                <option value="">(なし)</option>
+                                <option value="sumishin">住信SBIネット銀行</option>
+                                <option value="rakuten">楽天銀行</option>
+                                <option value="rakuten_sec">楽天証券</option>
+                                <option value="kyosai">小規模企業共済</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: 5px;">
+                        <label>金額 (¥)</label>
+                        <input type="number" id="tx_amount" required min="1" placeholder="例: 1500"
+                            style="padding: 10px; border-radius: 8px; border: 1px solid var(--current-glass-border); background: rgba(0,0,0,0.1); color: var(--current-text); font-family: 'Inter';">
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: 5px;">
+                        <label>メモ (任意)</label>
+                        <input type="text" id="tx_note" placeholder="詳細を入力..."
+                            style="padding: 10px; border-radius: 8px; border: 1px solid var(--current-glass-border); background: rgba(0,0,0,0.1); color: var(--current-text); font-family: 'Inter';">
+                    </div>
+
+                    <button type="submit" class="primary-btn"
+                        style="margin-top: 10px; justify-content: center; width: 100%;">
+                        保存する
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- App Logic -->
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>
