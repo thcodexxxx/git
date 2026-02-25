@@ -1,7 +1,7 @@
 CertType,SubjectName,SAN
-Computer,CN=MemberServer01.domain.local,
-Computer,CN=MemberServer02.domain.local,
-User,CN=User01,
-User,CN=User02,
-WebServer,CN=Web01.domain.local,dns=Web01.domain.local&dns=www.domain.local
-WebServer,CN=Web02.domain.local,dns=Web02.domain.local
+Computer,WIN-P3B1TK8EI3E.dss.mod.go.jp,
+Computer,MemberServer02.dss.mod.go.jp,
+User,administrator@dss.mod.go.jp,
+User,user02@dss.mod.go.jp,
+WebServer,Web01.dss.mod.go.jp,dns=Web01.dss.mod.go.jp&dns=www.dss.mod.go.jp
+WebServer,Web02.dss.mod.go.jp,dns=Web02.dss.mod.go.jp

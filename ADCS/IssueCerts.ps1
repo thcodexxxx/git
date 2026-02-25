@@ -1,6 +1,6 @@
 param (
     [string]$CsvPath = ".\Certificates.csv",
-    [string]$CAConfig = "CAServer.domain.local\IntermediateCA",
+    [string]$CAConfig = "WIN-P3B1TK8EI3E.dss.mod.go.jp\dss-intermediate-ca",
     [string]$OutputDir = ".\Output"
 )
 
@@ -25,16 +25,44 @@ foreach ($row in $csvData) {
     $templateName = ""
     $storeScope = "LocalMachine"
     
+    $infSubject = ""
+    $sanExtension = ""
+    
     if ($certType -eq "Computer") {
         $templateName = "コンピュータ証明書（サブジェクト入力）"
+        # コンピュータ証明書: サブジェクトは空で、SANにDNS名を設定する
+        $sanExtension = "2.5.29.17 = `"{text}dns=$subject`""
     }
     elseif ($certType -eq "User") {
         $templateName = "ユーザ証明書（サブジェクト入力）"
         $machineKeySet = "false"
         $storeScope = "CurrentUser"
+        # ユーザ証明書: サブジェクトはCNとドメイン要素。SANはUPN
+        # 簡単なプレースホルダーとしてCNのみを設定し、残りはADから取得させるか、
+        # 指定された入力 (例: administrator@dss.mod.go.jp) から生成します。
+        
+        $upn = ""
+        $cn = ""
+        if ($subject -match "@") {
+            $upn = $subject
+            $cn = ($subject -split "@")[0]
+        }
+        else {
+            $cn = $subject
+            $upn = "$subject@dss.mod.go.jp"
+        }
+        
+        # DCの組み立てはハードコードするか環境の引数にするかですが、一旦例に合わせます
+        $infSubject = "CN=$cn,CN=Users,DC=dss,DC=mod,DC=go,DC=jp"
+        $sanExtension = "2.5.29.17 = `"{text}upn=$upn`""
     }
     elseif ($certType -eq "WebServer") {
         $templateName = "サーバ証明書"
+        # Webサーバ: 組織名などを付与
+        $infSubject = "CN=$subject,O=Minitary of Defence,L=Shinjuku-ku,S=Tokyo,C=JP"
+        if (-not [string]::IsNullOrWhiteSpace($san)) {
+            $sanExtension = "2.5.29.17 = `"{text}$san`""
+        }
     }
     else {
         Write-Host "[$baseName] 不明な証明書タイプです: $certType" -ForegroundColor Yellow
@@ -47,7 +75,6 @@ foreach ($row in $csvData) {
 Signature=`"`$Windows NT$`"
 
 [NewRequest]
-Subject = `"$subject,O=MMM,OU=III,L=SSS-ku,S=TTT,C=JP`"
 KeyLength = 3072
 KeyAlgorithm = RSA
 ProviderName = `"Microsoft Software Key Storage Provider`"
@@ -56,13 +83,14 @@ Exportable = true
 RequestType = PKCS10
 "@
 
-    # WebServerでSANがある場合、INFの [Extensions] セクションにSANを埋め込む
-    # dns=name1&dns=name2 のような形式を想定
-    if ($certType -eq "WebServer" -and -not [string]::IsNullOrWhiteSpace($san)) {
-        # 'dns=' で始まっている形式をパースしてカンマ区切りの文字列に直すか、
-        # WindowsのINF形式で直接指定する形式 (2.5.29.17) にする
-        # 例: SANが "dns=web01&dns=www" の場合、2.5.29.17 = "{text}dns=web01&dns=www" と指定可能
-        $infContent += "`n[Extensions]`n2.5.29.17 = `"{text}$san`"`n"
+    # サブジェクト名が存在する場合のみ追加（Computer証明書のように空の場合は追加しない）
+    if (-not [string]::IsNullOrWhiteSpace($infSubject)) {
+        $infContent = $infContent -replace "\[NewRequest\]", "[NewRequest]`nSubject = `"$infSubject`""
+    }
+
+    # SAN Extensionがあれば追加
+    if ($sanExtension) {
+        $infContent += "`n[Extensions]`n$sanExtension`n"
     }
 
     # Set-Content without -Encoding in PowerShell 5.1 writes ANSI. certreq.exe expects ANSI or UTF-8.
@@ -88,9 +116,20 @@ RequestType = PKCS10
         $certObj.Import($cerPath)
         $thumbprint = $certObj.Thumbprint
 
-        Write-Host "[$baseName] PFXファイルとしてエクスポート中..."
-        $securePwd = ConvertTo-SecureString -String "" -Force -AsPlainText
-        Export-PfxCertificate -Cert "Cert:\$storeScope\My\$thumbprint" -FilePath $pfxPath -Password $securePwd | Out-Null
+        Write-Host "[$baseName] PFXファイルとしてエクスポート中（パスワードなし）..."
+        try {
+            # certutil を使ってパスワードなし("")でPfxをエクスポート
+            $storeName = if ($storeScope -eq "CurrentUser") { "-user" } else { "" }
+            $certutilArgs = @("certutil.exe", "-exportPFX", "-p", '""', $storeName, "My", $thumbprint, $pfxPath)
+            
+            # "-user" が空の要素にならないようにフィルタリング
+            $certutilArgs = $certutilArgs | Where-Object { $_ -ne "" }
+            
+            $exportResult = & $certutilArgs[0] $certutilArgs[1..($certutilArgs.Length - 1)] 2>&1
+        }
+        catch {
+            Write-Host "[$baseName] PFXエクスポートエラー: $_" -ForegroundColor Yellow
+        }
 
         Write-Host "[$baseName] 作業用の証明書をローカルストアから削除中..."
         try {

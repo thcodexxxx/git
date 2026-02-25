@@ -43,18 +43,20 @@
 
 **列名と説明:**
 - `CertType`: 発行する証明書の種別（`Computer`, `User`, `WebServer` のいずれか）。
-- `SubjectName`: サブジェクト名（共通名 `CN=` として記述）。
-- `SAN`: Webサーバ証明書の場合のみ使用。Subject Alternative Nameを指定します。複数ある場合は `&` で繋ぎます。
-  - 例: `dns=Web01.domain.local&dns=www.domain.local`
-
-スクリプト内で、全ての証明書の要求（CSR生成）時に、組織情報（O, OU, L, S, C）が自動付与されます（例: `,O=MMM,OU=III,L=SSS-ku,S=TTT,C=JP`）。
+- `SubjectName`: 
+  - `Computer`: 対象のFQDN（例: `WIN-P3B1TK8EI3E.dss.mod.go.jp`）。※サブジェクトは空となり、自動的にSANのDNS名として組み込まれます。
+  - `User`: 対象のユーザ名（例: `Administrator` または `admin@dss.mod.go.jp`）。※自動的に `CN=...,CN=Users,DC=dss...` のサブジェクト、UPN（プリンシパル名）のSANが付与されます。
+  - `WebServer`: 共通名（例: `Web01.dss.mod.go.jp`）。※自動的に O, OU, L, S, C が付与されます。
+- `SAN`:
+  - `WebServer` の場合のみ手動指定用に使用。複数ある場合は `&` で繋ぎます。
+  - 例: `dns=Web01.dss.mod.go.jp&dns=www.dss.mod.go.jp`
 
 **CSVの記述例:**
 ```csv
 CertType,SubjectName,SAN
-Computer,CN=MemberServer01.domain.local,
-User,CN=User01,
-WebServer,CN=Web01.domain.local,dns=Web01.domain.local&dns=www.domain.local
+Computer,WIN-P3B1TK8EI3E.dss.mod.go.jp,
+User,administrator@dss.mod.go.jp,
+WebServer,Web01.dss.mod.go.jp,dns=Web01.dss.mod.go.jp&dns=www.dss.mod.go.jp
 ```
 
 ### 3. スクリプトの実行
