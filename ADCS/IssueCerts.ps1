@@ -1,6 +1,6 @@
 param (
     [string]$CsvPath = ".\Certificates.csv",
-    [string]$CAConfig = "hostname.local\ca",
+    [string]$CAConfig = "CAServer.domain.local\IntermediateCA",
     [string]$OutputDir = ".\Output"
 )
 
@@ -85,35 +85,12 @@ RequestType = PKCS10
         certreq.exe -accept -q $cerPath
 
         $certObj = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2
-        try {
-            # .NETの仕様上、フルパスで指定しないとカレントディレクトリに依存して見つからないエラーになるため絶対パスを渡す
-            $certObj.Import($cerPath)
-            $thumbprint = $certObj.Thumbprint
-        }
-        catch {
-            Write-Host "[$baseName] 証明書の情報を読み込めませんでした（拇印取得失敗）: $_" -ForegroundColor Red
-            continue
-        }
+        $certObj.Import($cerPath)
+        $thumbprint = $certObj.Thumbprint
 
-        if ([string]::IsNullOrWhiteSpace($thumbprint)) {
-            Write-Host "[$baseName] 拇印が空のためPFX化と削除処理をスキップします。" -ForegroundColor Red
-            continue
-        }
-
-        Write-Host "[$baseName] PFXファイルとしてエクスポート中..."
-        try {
-            # certutil を使ってパスワードなし("")でPfxをエクスポート
-            $storeName = if ($storeScope -eq "CurrentUser") { "-user" } else { "" }
-            $certutilArgs = @("certutil.exe", "-exportPFX", "-p", '""', $storeName, "My", $thumbprint, $pfxPath)
-            
-            # "-user" が空の要素にならないようにフィルタリング
-            $certutilArgs = $certutilArgs | Where-Object { $_ -ne "" }
-            
-            $exportResult = & $certutilArgs[0] $certutilArgs[1..($certutilArgs.Length - 1)] 2>&1
-        }
-        catch {
-            Write-Host "[$baseName] PFXエクスポートエラー: $_" -ForegroundColor Yellow
-        }
+        Write-Host "[$baseName] PFXファイルとしてエクスポート中（パスワードなし）..."
+        $securePwd = ConvertTo-SecureString -String "" -Force -AsPlainText
+        Export-PfxCertificate -Cert "Cert:\$storeScope\My\$thumbprint" -FilePath $pfxPath -Password $securePwd | Out-Null
 
         Write-Host "[$baseName] 作業用の証明書をローカルストアから削除中..."
         try {
