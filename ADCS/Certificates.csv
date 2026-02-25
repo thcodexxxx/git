@@ -1,0 +1,7 @@
+CertType,SubjectName,SAN
+Computer,CN=MemberServer01.domain.local,
+Computer,CN=MemberServer02.domain.local,
+User,CN=User01,
+User,CN=User02,
+WebServer,CN=Web01.domain.local,dns=Web01.domain.local&dns=www.domain.local
+WebServer,CN=Web02.domain.local,dns=Web02.domain.local
