@@ -88,7 +88,7 @@ RequestType = PKCS10
         $certObj.Import($cerPath)
         $thumbprint = $certObj.Thumbprint
 
-        Write-Host "[$baseName] PFXファイルとしてエクスポート中（パスワードなし）..."
+        Write-Host "[$baseName] PFXファイルとしてエクスポート中..."
         $securePwd = ConvertTo-SecureString -String "" -Force -AsPlainText
         Export-PfxCertificate -Cert "Cert:\$storeScope\My\$thumbprint" -FilePath $pfxPath -Password $securePwd | Out-Null
 
